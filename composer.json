@@ -1,0 +1,58 @@
+{
+    "name": "panchodp/barcode",
+    "description": "Generate Code 128 svg barcodes in PHP",
+    "keywords": ["php","barcode","128","code128","generator"],
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Barcode\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Barcode\\BarcodeServiceProvider"
+            ],
+            "aliases": {
+                "Barcode": "Barcode\\Facades\\Barcode"
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "Francisco de Pablo",
+            "email": "fcodepablo@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3.0 | ^8.4.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.23",
+        "larastan/larastan": "^3.5.0",
+        "pestphp/pest": "^4.0.0",
+        "spatie/ray": "^1.42"
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/pest"
+        ],
+        "pint": [
+            "./vendor/bin/pint"
+        ],
+        "analyse": [
+            "./vendor/bin/phpstan analyse"
+        ],
+        "test:all": [
+            "@test","@pint","@analyse"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

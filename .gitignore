@@ -1,0 +1,13 @@
+build/
+.idea/
+.phpunit.cache/
+vendor/
+/.phpunit.result.cache
+/.phpunit.cache
+/.php-cs-fixer.cache
+/.php-cs-fixer.php
+.DS_Store
+composer.lock
+cliff.toml
+.claude
+.CLAUDE.md

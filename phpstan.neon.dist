@@ -1,0 +1,15 @@
+includes:
+
+parameters:
+    paths:
+        - src/
+
+    # Level 10 is the highest level
+    level: max
+
+#    ignoreErrors:
+#        - '#PHPDoc tag @var#'
+#
+#    excludePaths:
+#        - src/Facades/BarcodeFacade.php
+#        - src/Facades/Barcode.php
