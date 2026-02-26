@@ -9,10 +9,6 @@
 <a href="https://github.com/PanchoDP/barcode/actions/workflows/tests.yml"><img src="https://github.com/PanchoDP/barcode/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
 </p>
 
-> [!IMPORTANT]
-> Caution: This package is a work in progress and may not be production-ready. Use at your own risk.
-
-
 # Barcode 128 Generator
 
 A simple PHP library to generate Code 128 barcodes in SVG format. Compatible with both **Laravel** and **pure PHP** projects.
