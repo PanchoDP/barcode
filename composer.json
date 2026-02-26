@@ -31,10 +31,10 @@
         "php": "^8.3.0 | ^8.4.0 | ^8.5.0 "
     },
     "require-dev": {
-        "laravel/pint": "^1.23",
-        "larastan/larastan": "^3.5.0",
-        "pestphp/pest": "^4.0.0",
-        "spatie/ray": "^1.42"
+        "laravel/pint": "^1.27.1",
+        "larastan/larastan": "^3.9.2",
+        "pestphp/pest": "^4.4.1",
+        "spatie/ray": "^1.47"
     },
     "scripts": {
         "test": [
