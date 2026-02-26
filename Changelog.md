@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2026-02-26
+
+### 📚 Documentation
+
+- Update readme
+
 ## [0.2.1] - 2026-02-26
 
 ### 🧪 Testing
