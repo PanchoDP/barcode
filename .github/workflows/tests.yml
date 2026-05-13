@@ -26,6 +26,7 @@ jobs:
         php-version: ${{ matrix.php-version }}
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
         coverage: none
+        tools: composer:2.9.8
 
     - name: Cache Composer packages
       id: composer-cache
