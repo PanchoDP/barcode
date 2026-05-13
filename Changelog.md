@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2026-05-13
+
+### 🐛 Bug Fixes
+
+- Change composer version in test
+
 ## [1.0.0] - 2026-02-26
 
 ### 📚 Documentation
