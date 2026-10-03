@@ -14,14 +14,4 @@ class BarcodeServiceProvider extends ServiceProvider
             return new Barcode();
         });
     }
-
-    public function boot(): void
-    {
-        // Configuration publishing if needed
-        if ($this->app->runningInConsole() && function_exists('config_path')) {
-            $this->publishes([
-                __DIR__.'/../config/barcode.php' => config_path('barcode.php'),
-            ], 'barcode-config');
-        }
-    }
 }

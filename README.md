@@ -11,32 +11,9 @@
 
 # Barcode 128 Generator
 
-A simple PHP library to generate Code 128 barcodes in SVG format. Compatible with both **Laravel** and **pure PHP** projects.
-
-## Features
-
-✅ **Laravel & Pure PHP Compatible** - Works with both Laravel and standalone PHP projects  
-✅ **Code 128 Support** - Full support for Code Set A, B and C with automatic selection  
-✅ **SVG Output** - Scalable vector graphics (no GD dependency)  
-✅ **Highly Customizable** - Colors, margins, text, dimensions  
-✅ **Multiple Output Formats** - String, file, base64 data URL  
-✅ **Auto-discovery** - Laravel 5.5+ automatic service provider registration
+Generate Code 128 barcodes as SVG in PHP. No external dependencies, works in any PHP project and integrates with Laravel out of the box.
 
 ## Installation
-
-### For Laravel Projects
-
-```bash
-composer require panchodp/barcode
-```
-
-The package will be **automatically discovered** by Laravel 5.5+. Optionally publish the config:
-
-```bash
-php artisan vendor:publish --tag=barcode-config
-```
-
-### For Pure PHP Projects
 
 ```bash
 composer require panchodp/barcode
@@ -44,269 +21,82 @@ composer require panchodp/barcode
 
 ## Usage
 
-### Laravel Usage (with Facades)
+```php
+use Barcode\Barcode;
+
+$barcode = new Barcode();
+
+// SVG markup
+$svg = $barcode->generateSvg('ABC123');
+
+// Data URL, ready for an <img> tag
+echo '<img src="' . $barcode->generateSvgBase64('ABC123') . '" />';
+
+// Save to a file
+$barcode->generateSvgFile('ABC123', __DIR__ . '/barcode.svg');
+```
+
+In Laravel you can also use the facade or inject the class:
 
 ```php
 use Barcode\Facades\Barcode;
 
-// Generate binary pattern
-$pattern = Barcode::generate('123456789');
-
-// Generate SVG with quick options
-$svg = Barcode::generateWithOptions('123456789', 3, 80);
-
-// Generate SVG with full customization
-$svg = Barcode::generateSvg('HELLO123', 'Custom Text', [
-    'bar_width' => 3,
-    'bar_height' => 80,
-    'background_color' => '#f0f0f0',
-    'foreground_color' => '#333333',
-    'show_text' => true
-]);
-
-// Save to file
-Barcode::generateSvgFile('ABC123', 'barcode.svg', [
-    'bar_width' => 2,
-    'bar_height' => 60
-]);
-
-// Generate base64 for web
-$dataUrl = Barcode::generateSvgBase64('WEB789');
-echo '<img src="' . $dataUrl . '" />';
-
-// Validate code
-if (Barcode::validateCode('123456789')) {
-    echo "Valid barcode data";
-}
+$svg = Barcode::generateSvg('ABC123');
 ```
 
-### Laravel Usage (with Dependency Injection)
-
 ```php
-use Barcode\Barcode;
-
-class BarcodeController extends Controller
+public function show(\Barcode\Barcode $barcode)
 {
-    public function generate(Barcode $barcode)
-    {
-        $svg = $barcode->generateSvg('123456789');
-        return response($svg)->header('Content-Type', 'image/svg+xml');
-    }
-    
-    public function download(Barcode $barcode)
-    {
-        $filename = storage_path('app/barcode.svg');
-        $barcode->generateSvgFile('ORDER123', $filename);
-        
-        return response()->download($filename);
-    }
+    return response($barcode->generateSvg('ABC123'))
+        ->header('Content-Type', 'image/svg+xml');
 }
 ```
 
-### Pure PHP Usage
+## Methods
+
+| Method | Returns |
+|--------|---------|
+| `generateSvg(string $code, string $text = '', array $options = [])` | SVG markup. `$text` replaces the text shown under the bars. |
+| `generateSvgBase64(string $code, array $options = [])` | `data:image/svg+xml;base64,...` string |
+| `generateSvgFile(string $code, string $filename, array $options = [])` | The file path after saving the SVG |
+| `generateWithOptions(string $code, int $width = 2, int $height = 60)` | Data URL (shortcut for bar width and height) |
+| `validateCode(string $code)` | `true` if the code can be encoded |
+| `generate(string $code)` / `getBinaryPattern(string $code)` | Raw bar pattern (`"1101001..."`) |
+
+## Options
+
+All options are optional. Values outside the allowed range are clamped.
+
+| Option | Default | Range | Description |
+|--------|---------|-------|-------------|
+| `bar_width` | `2` | 1–50 | Width of each bar (px) |
+| `bar_height` | `60` | 10–500 | Height of the bars (px) |
+| `margin_left` / `margin_right` | `10` | 0–100 | Horizontal spacing (px) |
+| `margin_top` / `margin_bottom` | `10` | 0–100 | Vertical spacing (px) |
+| `background_color` | `#FFFFFF` | | Background color |
+| `foreground_color` | `#000000` | | Bars and text color |
+| `show_text` | `true` | | Show the text under the bars |
+| `text_size` | `12` | 8–72 | Font size (px) |
+| `text_margin` | `5` | 0–50 | Space between bars and text (px) |
 
 ```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use Barcode\Barcode;
-
-$barcode = new Barcode();
-
-// Generate binary pattern
-$pattern = $barcode->generate('123456789');
-
-// Generate SVG
-$svg = $barcode->generateSvg('HELLO123');
-
-// Generate SVG with custom options
-$customSvg = $barcode->generateSvg('CODE128', '', [
+$svg = $barcode->generateSvg('ABC123', 'Order #123', [
     'bar_width' => 3,
     'bar_height' => 80,
-    'margin_left' => 20,
-    'margin_right' => 20,
-    'margin_top' => 10,
-    'margin_bottom' => 30,
-    'show_text' => true,
-    'background_color' => '#FFFFFF',
-    'foreground_color' => '#000000',
-    'text_size' => 12,
-    'text_margin' => 5
+    'foreground_color' => '#333333',
 ]);
-
-// Save SVG to file
-$barcode->generateSvgFile('ABC123', 'barcode.svg', [
-    'bar_width' => 2,
-    'bar_height' => 60,
-    'show_text' => true
-]);
-
-// Generate SVG as base64 for web
-$svgBase64 = $barcode->generateSvgBase64('WEB789', [
-    'bar_width' => 2,
-    'bar_height' => 50,
-    'show_text' => true
-]);
-echo '<img src="' . $svgBase64 . '" />';
-
-// Validate code
-if ($barcode->validateCode('123456789')) {
-    echo "Valid code";
-}
 ```
 
-### Using Facades (Laravel or Pure PHP)
+## Limitations
 
-```php
-use Barcode\Facades\Barcode;
-
-// Works in both Laravel and pure PHP
-$pattern = Barcode::generate('123456789');
-$svg = Barcode::generateSvg('HELLO123');
-$isValid = Barcode::validateCode('TEST123');
-```
-
-## Available Methods
-
-### Main Class (Barcode)
-
-- `generate(string $code, array $options = [])` - Generate binary pattern of the barcode
-- `generateWithOptions(string $code, int $width = 2, int $height = 60)` - Generate SVG with basic options
-- `generateSvg(string $code, string $text = '', array $options = [])` - Generate SVG with full options
-- `generateSvgFile(string $code, string $filename, array $options = [])` - Generate and save SVG to file
-- `generateSvgBase64(string $code, array $options = [])` - Generate SVG as base64 data URL
-- `validateCode(string $code)` - Validate if a code is valid (max 48 characters)
-- `getBinaryPattern(string $code)` - Get the binary pattern
-
-## Customization Options
-
-```php
-$options = [
-    'bar_width' => 2,                   // Width of each bar (pixels)
-    'bar_height' => 60,                 // Height of bars (pixels)
-    'margin_left' => 10,                // Left margin
-    'margin_right' => 10,               // Right margin
-    'margin_top' => 10,                 // Top margin
-    'margin_bottom' => 10,              // Bottom margin
-    'background_color' => '#FFFFFF',    // Background color
-    'foreground_color' => '#000000',    // Bar color
-    'show_text' => true,                // Show text below barcode
-    'text_size' => 12,                  // Text size
-    'text_margin' => 5                  // Text margin
-];
-
-// Laravel
-$svg = Barcode::generateSvg('123456789', 'Custom Text', $options);
-
-// Pure PHP
-$barcode = new Barcode();
-$svg = $barcode->generateSvg('123456789', 'Custom Text', $options);
-```
-
-## Laravel Configuration
-
-After publishing the config file, you can set default options in `config/barcode.php`:
-
-```php
-return [
-    'defaults' => [
-        'bar_width' => 2,
-        'bar_height' => 60,
-        'margin_left' => 10,
-        'margin_right' => 10,
-        'margin_top' => 10,
-        'margin_bottom' => 10,
-        'background_color' => '#FFFFFF',
-        'foreground_color' => '#000000',
-        'show_text' => true,
-        'text_size' => 12,
-        'text_margin' => 5,
-    ],
-];
-```
-
-## Visual Layout Guide
-
-```
-┌─────────────────────────────────────────────┐ ← margin_top
-│                background_color             │
-│  ┌─margin_left                margin_right─┐│
-│  │ ███ █ ██ █ ███ █ ██ █ ███               ││ ← bar_height
-│  │ ███ █ ██ █ ███ █ ██ █ ███               ││   (foreground_color)
-│  │ ███ █ ██ █ ███ █ ██ █ ███               ││
-│  │                                         ││
-│  │         ↑ text_margin                   ││
-│  │        BARCODE123                       ││ ← text_size
-│  └─────────────────────────────────────────┘│
-└─────────────────────────────────────────────┘ ← margin_bottom
-          ↑
-       bar_width
-```
-
-### Option Details:
-
-- **`bar_width`**: Controls the thickness of each individual bar
-- **`bar_height`**: Sets the vertical height of the barcode bars
-- **`margin_top/bottom/left/right`**: Adds spacing around the entire barcode
-- **`background_color`**: Background color of the entire SVG canvas
-- **`foreground_color`**: Color of the barcode bars (typically black)
-- **`show_text`**: Whether to display the code text below the barcode
-- **`text_size`**: Font size of the displayed text
-- **`text_margin`**: Space between the barcode bars and the text
-
-## Code 128 Support
-
-This library supports Code 128 with automatic code set selection:
-
-- **Code Set A**: Uppercase letters, numbers, and control characters
-- **Code Set B**: Upper/lowercase letters, numbers, and symbols  
-- **Code Set C**: Numbers only (more efficient for numeric data)
-
-The library automatically selects the most efficient code set based on your input data.
-
-## Validation
-
-```php
-// Laravel
-if (Barcode::validateCode('123456789')) {
-    echo "Valid barcode data";
-}
-
-// Pure PHP
-$barcode = new Barcode();
-if ($barcode->validateCode('123456789')) {
-    echo "Valid barcode data";
-}
-```
-
-## Framework Compatibility
-
-| Framework | Support | Installation | Usage |
-|-----------|---------|--------------|-------|
-| **Laravel 5.5+** | ✅ Full | `composer require panchodp/barcode` | Auto-discovery, facades, DI |
-| **Pure PHP** | ✅ Full | `composer require panchodp/barcode` | Direct class usage, manual facades |
-| **Symfony** | ✅ Compatible | `composer require panchodp/barcode` | Manual service registration |
-| **Other Frameworks** | ✅ Compatible | `composer require panchodp/barcode` | Standard PSR-4 autoloading |
-
-## Examples
-
-Run the included example files:
-
-```bash
-# Basic example
-php example.php
-
-# Complete SVG example
-php ejemplo-svg.php
-```
+- Codes must be 1–48 ASCII characters.
+- The best code set is picked automatically: **C** for even-length numbers (4+ digits), **B** if the code has lowercase letters, **A** otherwise. Sets are not mixed within one code.
+- Colors must be hex (`#RGB` or `#RRGGBB`) or one of: `black`, `white`, `gray`, `grey`, `red`, `green`, `blue`, `yellow`, `orange`, `purple`, `pink`, `brown`, `cyan`, `magenta`.
+- File names for `generateSvgFile()` may only contain letters, numbers, `_`, `-` and `.`, must end in `.svg`, and the directory must exist.
 
 ## Requirements
 
-- PHP 8.3+ or PHP 8.4+
-- No external dependencies
-- Laravel 5.5+ (optional, for Laravel integration)
-
+- PHP 8.3+
 
 ## License
 

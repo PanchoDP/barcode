@@ -53,45 +53,6 @@ final class BarcodeServiceProviderTest extends TestCase
         $this->assertSame($barcode1, $barcode2);
     }
 
-    public function test_boot_method_exists_and_callable()
-    {
-        $this->assertTrue(method_exists($this->provider, 'boot'));
-        $this->assertTrue(is_callable([$this->provider, 'boot']));
-    }
-
-    public function test_boot_method_runs_without_error()
-    {
-        // Test basic boot functionality with Container (not full Laravel app)
-        $errorOccurred = false;
-
-        try {
-            $this->provider->boot();
-        } catch (Error $e) {
-            $errorOccurred = true;
-            // Expected since Container doesn't have runningInConsole method
-            $this->assertStringContainsString('runningInConsole', $e->getMessage());
-        }
-
-        // Should throw error since we don't have Laravel's full application
-        $this->assertTrue($errorOccurred);
-    }
-
-    public function test_boot_method_handles_missing_methods_gracefully()
-    {
-        // Verify boot method doesn't crash the application
-        $crashed = false;
-
-        try {
-            $this->provider->boot();
-        } catch (Error $e) {
-            $crashed = true;
-            // Should fail gracefully with a specific method error
-            $this->assertStringContainsString('runningInConsole', $e->getMessage());
-        }
-
-        $this->assertTrue($crashed, 'Boot method should fail gracefully when Laravel methods are missing');
-    }
-
     public function test_resolved_barcode_can_generate_codes()
     {
         $this->provider->register();
