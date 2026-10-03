@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-10-03
+
+### 🚜 Refactor
+
+- Remove unused config file and simplify README
+
+### 📚 Documentation
+
+- Add security policy
+
+### ⚙️ Miscellaneous Tasks
+
+- Pin actions to commit SHAs and restrict workflow permissions
+- Add composer audit step and dependabot for actions
+
 ## [1.0.1] - 2026-05-13
 
 ### 🐛 Bug Fixes
